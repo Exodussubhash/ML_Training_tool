@@ -23,6 +23,8 @@ split:
 
 training:
   target_column: "Churn"
+  cv_folds: 5            # 0 or 1 = skip CV
+  cv_scoring: "f1_weighted"
   models:
     - name: "logistic_regression"
       type: "logistic_regression"
@@ -38,3 +40,6 @@ training:
     #   hyperparameters: {n_estimators: 100, class_weight: "balanced"}
 
   artifacts_dir: "artifacts"
+
+use_mlflow: true
+mlflow_experiment_name: "customer_churn_experiment"

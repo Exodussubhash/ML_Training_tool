@@ -21,6 +21,7 @@ from src.trainer import Trainer
 from src.evaluator import Evaluator
 from artifacts.create_artifacts import ArtifactStore
 from src.logger import setup_logging
+from src.mlflow_log import log_to_mlflow
 
 setup_logging()
 logger = logging.getLogger(__name__)
@@ -69,15 +70,23 @@ def run_pipeline(config):
     test_processed = preprocessor.transform(test_df)
 
     # Train
-    trainer = Trainer(train_config)
-    models = trainer.train(train_processed)
+    trainer = Trainer(train_config, pre_config)
+    models = trainer.train(train_processed, raw_train_df=train_df)
 
     # Evaluate
     evaluator = Evaluator(models, test_processed)
     results = evaluator.evaluate()
+    for name, cv_result in trainer.cv_results.items():
+        if name in results:
+            results[name]["cross_validation"] = cv_result
+
+    # Log to MLflow
+    if config["use_mlflow"]:
+        experiment_name = config.get("mlflow_experiment_name", "default")
+        log_to_mlflow(config, models, results, trainer.cv_results, experiment_name)
 
     # Save versioned artifacts
-    store = ArtifactStore(config.get("artifacts_dir", "artifacts"))
+    store = ArtifactStore(config.get("artifacts_dir", train_config.get("artifacts_dir", "artifacts")))
     run_dir = store.save(
         models, results, config,
         feature_columns=list(train_processed.columns),

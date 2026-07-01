@@ -1,0 +1,9 @@
+mlruns/
+mlflow.db
+artifacts/*/
+!artifacts/create_artifacts.py
+__pycache__/
+*.pyc
+.pytest_cache/
+.DS_Store
+.deepeval/
