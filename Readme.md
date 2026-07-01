@@ -143,9 +143,7 @@ accuracy is misleading on imbalanced data.
 
 ## What I would improve with more time
 
-- **Cross-validation and hyperparameter tuning** for more robust model selection.
 - **Experiment tracking** (e.g. MLflow) instead of JSON metadata files.
-- **Automatic best-model selection** by a configurable metric.
 - **A batch prediction pipeline** that loads a saved artifact and scores new data
   in memory-efficient chunks, plus a monitoring layer for drift detection.
 - **Cloud artifact storage** (e.g. GCS) behind the same interface as local
